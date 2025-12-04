@@ -1,0 +1,7 @@
+# Frontend Service - Minimal requirements
+# This is optional - the frontend can be served by any web server
+# Python server.py is provided as a convenience
+
+# No special requirements - uses Python's built-in http.server
+# Or install uvicorn/fastapi if you want a more robust server
+

@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Collector ADIA - Task Manager</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .panel {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .panel h2 {
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(102, 126, 234, 0.4);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .task-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .task-item {
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .task-item:hover {
+            border-color: #667eea;
+            background: #f5f7ff;
+        }
+
+        .task-item.active {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+
+        .task-title {
+            font-weight: 500;
+            color: #333;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            flex: 1;
+        }
+
+        .task-status {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-pending { background: #fff3cd; color: #856404; }
+        .status-running { background: #cfe2ff; color: #084298; }
+        .status-completed { background: #d1e7dd; color: #0f5132; }
+        .status-failed { background: #f8d7da; color: #842029; }
+        .status-cancelled { background: #e2e3e5; color: #41464b; }
+
+        .task-meta {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .stream-output {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            max-height: 500px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .step-indicator {
+            display: inline-block;
+            padding: 2px 8px;
+            background: #667eea;
+            color: white;
+            border-radius: 3px;
+            font-size: 11px;
+            margin-right: 10px;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            color: #f44336;
+            background: #ffebee;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+
+        .success {
+            color: #4caf50;
+            background: #e8f5e9;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Data Collector ADIA</h1>
+            <p>Distributed Browser Automation System</p>
+        </div>
+
+        <div class="main-content">
+            <div class="panel">
+                <h2>📝 Create New Task</h2>
+                <form id="taskForm">
+                    <div class="form-group">
+                        <label for="taskPrompt">Task Prompt</label>
+                        <textarea id="taskPrompt" placeholder="Enter your browser automation task..." required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="maxSteps">Max Steps</label>
+                        <input type="number" id="maxSteps" value="100" min="1" max="1000">
+                    </div>
+                    <div class="form-group">
+                        <label for="browserName">Browser</label>
+                        <select id="browserName">
+                            <option value="firefox">Firefox</option>
+                            <option value="chrome">Chrome</option>
+                            <option value="webkit">WebKit</option>
+                        </select>
+                    </div>
+                    <button type="submit" id="startButton">Start Task</button>
+                </form>
+
+                <h2 style="margin-top: 30px;">📋 Task History</h2>
+                <div id="taskList" class="task-list">
+                    <p style="color: #999; text-align: center; padding: 20px;">Loading tasks...</p>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h2>📊 Task Output</h2>
+                <div id="streamOutput" class="stream-output">No task selected. Create a new task or select from history.</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const BACKEND_URL = 'http://localhost:8000';
+        let currentTaskId = null;
+        let currentWebSocket = null;
+
+        // Load tasks on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            loadTasks();
+        });
+
+        // Handle form submission
+        document.getElementById('taskForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await createAndStartTask();
+        });
+
+        async function createAndStartTask() {
+            const taskPrompt = document.getElementById('taskPrompt').value;
+            const maxSteps = parseInt(document.getElementById('maxSteps').value);
+            const browserName = document.getElementById('browserName').value;
+            const startButton = document.getElementById('startButton');
+
+            startButton.disabled = true;
+            startButton.textContent = 'Starting...';
+
+            try {
+                const response = await fetch(`${BACKEND_URL}/tasks/start`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        task_prompt: taskPrompt,
+                        max_steps: maxSteps,
+                        browser_name: browserName,
+                        browser_port: 9999
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    currentTaskId = data.task_id;
+                    addMessage('success', `Task created: ${data.task_id}`);
+                    loadTasks();
+                    connectToStream(data.task_id);
+                } else {
+                    addMessage('error', `Failed to start task: ${data.message}`);
+                }
+            } catch (error) {
+                addMessage('error', `Error: ${error.message}`);
+            } finally {
+                startButton.disabled = false;
+                startButton.textContent = 'Start Task';
+            }
+        }
+
+        async function loadTasks() {
+            try {
+                const response = await fetch(`${BACKEND_URL.replace('8000', '8002')}/tasks?limit=50`);
+                const tasks = await response.json();
+
+                const taskList = document.getElementById('taskList');
+                
+                if (tasks.length === 0) {
+                    taskList.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">No tasks yet. Create your first task!</p>';
+                    return;
+                }
+
+                taskList.innerHTML = tasks.map(task => `
+                    <div class="task-item ${task.task_id === currentTaskId ? 'active' : ''}" onclick="selectTask('${task.task_id}')">
+                        <div class="task-header">
+                            <div class="task-title">${escapeHtml(task.task_prompt.substring(0, 50))}${task.task_prompt.length > 50 ? '...' : ''}</div>
+                            <span class="task-status status-${task.status}">${task.status}</span>
+                        </div>
+                        <div class="task-meta">
+                            Steps: ${task.max_steps} | Created: ${new Date(task.created_at * 1000).toLocaleString()}
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading tasks:', error);
+            }
+        }
+
+        async function selectTask(taskId) {
+            currentTaskId = taskId;
+            loadTasks(); // Refresh to show active state
+
+            // Load task history
+            try {
+                const response = await fetch(`${BACKEND_URL.replace('8000', '8002')}/tasks/${taskId}/history`);
+                const history = await response.json();
+
+                const output = document.getElementById('streamOutput');
+                output.innerHTML = history.map(item => {
+                    try {
+                        const stepData = JSON.parse(item.step_data);
+                        return formatOutput(stepData);
+                    } catch (e) {
+                        return `[${item.output_type}] ${item.step_data}\n`;
+                    }
+                }).join('\n\n');
+                
+                output.scrollTop = output.scrollHeight;
+            } catch (error) {
+                console.error('Error loading task history:', error);
+            }
+
+            // Connect to stream if task is running
+            const taskResponse = await fetch(`${BACKEND_URL}/tasks/${taskId}/status`);
+            const taskData = await taskResponse.json();
+            
+            if (taskData.status === 'running') {
+                connectToStream(taskId);
+            }
+        }
+
+        function connectToStream(taskId) {
+            // Close existing connection
+            if (currentWebSocket) {
+                currentWebSocket.close();
+            }
+
+            const wsUrl = BACKEND_URL.replace('http', 'ws') + `/tasks/${taskId}/stream`;
+            const ws = new WebSocket(wsUrl);
+            currentWebSocket = ws;
+
+            const output = document.getElementById('streamOutput');
+            output.innerHTML = '';
+
+            ws.onopen = () => {
+                addMessage('success', `Connected to task stream: ${taskId}`);
+            };
+
+            ws.onmessage = (event) => {
+                try {
+                    const data = JSON.parse(event.data);
+                    output.innerHTML += formatOutput(data) + '\n\n';
+                    output.scrollTop = output.scrollHeight;
+                } catch (error) {
+                    output.innerHTML += `[RAW] ${event.data}\n`;
+                    output.scrollTop = output.scrollHeight;
+                }
+            };
+
+            ws.onerror = (error) => {
+                addMessage('error', `WebSocket error: ${error}`);
+            };
+
+            ws.onclose = () => {
+                addMessage('info', 'Stream connection closed');
+                currentWebSocket = null;
+            };
+        }
+
+        function formatOutput(data) {
+            if (data.type === 'task_start') {
+                return `🚀 Task Started\nTask: ${data.task}\nMax Steps: ${data.max_steps}\n`;
+            } else if (data.type === 'step') {
+                let output = `<span class="step-indicator">Step ${data.step_number}</span>`;
+                if (data.url) output += `URL: ${data.url}\n`;
+                if (data.thinking) output += `Thinking: ${data.thinking}\n`;
+                if (data.next_goal) output += `Next Goal: ${data.next_goal}\n`;
+                if (data.actions && data.actions.length > 0) {
+                    output += `Actions: ${JSON.stringify(data.actions, null, 2)}\n`;
+                }
+                if (data.results && data.results.length > 0) {
+                    output += `Results: ${JSON.stringify(data.results, null, 2)}\n`;
+                }
+                return output;
+            } else if (data.type === 'task_complete') {
+                return `✅ Task Completed\nSuccess: ${data.is_successful}\nTotal Steps: ${data.total_steps}\nFinal Result: ${data.final_result || 'N/A'}\n`;
+            } else if (data.type === 'error') {
+                return `❌ Error: ${data.error}\n`;
+            }
+            return JSON.stringify(data, null, 2);
+        }
+
+        function addMessage(type, message) {
+            const output = document.getElementById('streamOutput');
+            const className = type === 'error' ? 'error' : type === 'success' ? 'success' : '';
+            output.innerHTML += `<div class="${className}">${escapeHtml(message)}</div>\n`;
+            output.scrollTop = output.scrollHeight;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Refresh tasks every 5 seconds
+        setInterval(loadTasks, 5000);
+    </script>
+</body>
+</html>
+
