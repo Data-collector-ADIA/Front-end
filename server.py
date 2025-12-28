@@ -1,37 +1,30 @@
 """
-Frontend Service - Simple HTTP server to serve the HTML interface
+Frontend Service - HTTP server with gRPC proxy support
+Serves HTML interface and proxies API calls to gRPC services
+
+This file now redirects to proxy_server.py for full functionality.
+For best results, run: python proxy_server.py
 """
 
 import os
-from http.server import HTTPServer, SimpleHTTPRequestHandler
-from pathlib import Path
+import sys
 
-class CustomHandler(SimpleHTTPRequestHandler):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, directory=str(Path(__file__).parent), **kwargs)
-    
-    def end_headers(self):
-        # Add CORS headers
-        self.send_header('Access-Control-Allow-Origin', '*')
-        self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
-        self.send_header('Access-Control-Allow-Headers', 'Content-Type')
-        super().end_headers()
-
-
-def serve(port: int = 8003):
-    """Start the frontend server"""
-    server_address = ('0.0.0.0', port)
-    httpd = HTTPServer(server_address, CustomHandler)
-    print(f"Frontend server running on http://localhost:{port}")
-    try:
-        httpd.serve_forever()
-    except KeyboardInterrupt:
-        print("\nShutting down frontend server...")
-        httpd.shutdown()
-
-
+# Redirect to proxy_server.py for full functionality
 if __name__ == "__main__":
-    import sys
-    port = int(os.getenv("FRONTEND_SERVICE_PORT", "8003"))
-    serve(port)
+    print("=" * 60)
+    print("NOTE: server.py is being redirected to proxy_server.py")
+    print("For full gRPC support, use: python proxy_server.py")
+    print("=" * 60)
+    print()
+    
+    # Import and run proxy_server
+    try:
+        from proxy_server import serve
+        port = int(os.getenv("FRONTEND_SERVICE_PORT", "8501"))
+        serve(port)
+    except ImportError as e:
+        print(f"ERROR: Could not import proxy_server: {e}")
+        print("Please make sure proxy_server.py exists in the same directory.")
+        print("Alternatively, use Streamlit: streamlit run app.py")
+        sys.exit(1)
 

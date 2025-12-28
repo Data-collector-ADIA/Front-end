@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,128 +14,93 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #0f0f0f;
+            color: #e0e0e0;
             min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .app-container {
+            display: flex;
+            height: 100vh;
+            position: relative;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            position: fixed;
+            left: -320px;
+            top: 0;
+            width: 320px;
+            height: 100vh;
+            background: #1a1a1a;
+            border-right: 1px solid #2a2a2a;
+            transition: left 0.3s ease;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar.open {
+            left: 0;
+        }
+
+        .sidebar-header {
             padding: 20px;
+            border-bottom: 1px solid #2a2a2a;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
+        .sidebar-header h2 {
+            font-size: 18px;
+            color: #fff;
         }
 
-        .header {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
-        }
-
-        .header h1 {
-            color: #333;
-            margin-bottom: 10px;
-        }
-
-        .header p {
-            color: #666;
-        }
-
-        .main-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        .panel {
-            background: white;
-            border-radius: 10px;
-            padding: 25px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-
-        .panel h2 {
-            color: #333;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #667eea;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 5px;
-            color: #555;
-            font-weight: 500;
-        }
-
-        input, textarea, select {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 5px;
-            font-size: 14px;
-            transition: border-color 0.3s;
-        }
-
-        input:focus, textarea:focus, select:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-
-        button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+        .close-sidebar {
+            background: none;
             border: none;
-            padding: 12px 30px;
-            border-radius: 5px;
+            color: #888;
+            font-size: 24px;
             cursor: pointer;
-            font-size: 16px;
-            font-weight: 500;
-            transition: transform 0.2s, box-shadow 0.2s;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.2s;
         }
 
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(102, 126, 234, 0.4);
-        }
-
-        button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
+        .close-sidebar:hover {
+            color: #fff;
         }
 
         .task-list {
-            max-height: 400px;
+            flex: 1;
             overflow-y: auto;
+            padding: 10px;
         }
 
         .task-item {
-            padding: 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 5px;
-            margin-bottom: 10px;
+            padding: 12px;
+            border: 1px solid #2a2a2a;
+            border-radius: 8px;
+            margin-bottom: 8px;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.2s;
+            background: #1f1f1f;
         }
 
         .task-item:hover {
             border-color: #667eea;
-            background: #f5f7ff;
+            background: #252525;
         }
 
         .task-item.active {
             border-color: #667eea;
-            background: #f0f4ff;
+            background: #2a2a4a;
         }
 
         .task-header {
@@ -146,139 +112,468 @@
 
         .task-title {
             font-weight: 500;
-            color: #333;
+            color: #e0e0e0;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
             flex: 1;
+            font-size: 13px;
         }
 
         .task-status {
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 500;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
         }
 
-        .status-pending { background: #fff3cd; color: #856404; }
-        .status-running { background: #cfe2ff; color: #084298; }
-        .status-completed { background: #d1e7dd; color: #0f5132; }
-        .status-failed { background: #f8d7da; color: #842029; }
-        .status-cancelled { background: #e2e3e5; color: #41464b; }
+        .status-pending {
+            background: #3d3300;
+            color: #ffb800;
+        }
+
+        .status-running {
+            background: #003d66;
+            color: #00b8ff;
+        }
+
+        .status-completed {
+            background: #003d1a;
+            color: #00ff66;
+        }
+
+        .status-failed {
+            background: #3d0000;
+            color: #ff4444;
+        }
+
+        .status-cancelled {
+            background: #2a2a2a;
+            color: #888;
+        }
 
         .task-meta {
-            font-size: 12px;
+            font-size: 11px;
             color: #666;
         }
 
-        .stream-output {
-            background: #1e1e1e;
-            color: #d4d4d4;
-            padding: 20px;
-            border-radius: 5px;
-            font-family: 'Courier New', monospace;
-            font-size: 13px;
-            max-height: 500px;
-            overflow-y: auto;
-            white-space: pre-wrap;
-            word-wrap: break-word;
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            transition: margin-left 0.3s ease;
         }
 
-        .step-indicator {
+        .sidebar.open~.main-content {
+            margin-left: 320px;
+        }
+
+        /* Header */
+        .header {
+            background: #1a1a1a;
+            padding: 20px 30px;
+            border-bottom: 1px solid #2a2a2a;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .menu-toggle {
+            background: #2a2a2a;
+            border: none;
+            color: #e0e0e0;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            transition: background 0.2s;
+        }
+
+        .menu-toggle:hover {
+            background: #333;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        /* Input Section */
+        .input-section {
+            background: #1a1a1a;
+            padding: 20px 30px;
+            border-bottom: 1px solid #2a2a2a;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 15px;
+            align-items: flex-end;
+        }
+
+        .input-group {
+            flex: 1;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #999;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .input-group input,
+        .input-group textarea,
+        .input-group select {
+            width: 100%;
+            padding: 12px;
+            background: #0f0f0f;
+            border: 1px solid #2a2a2a;
+            border-radius: 8px;
+            color: #e0e0e0;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+        .input-group input:focus,
+        .input-group textarea:focus,
+        .input-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .input-group textarea {
+            resize: vertical;
+            min-height: 50px;
+            font-family: inherit;
+        }
+
+        .input-group.small {
+            flex: 0 0 150px;
+        }
+
+        .start-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+            height: 46px;
+        }
+
+        .start-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .start-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Output Grid */
+        .output-grid {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 1px;
+            background: #2a2a2a;
+            overflow: hidden;
+        }
+
+        .output-panel {
+            background: #0f0f0f;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .output-panel.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .panel-header {
+            padding: 15px 20px;
+            background: #1a1a1a;
+            border-bottom: 1px solid #2a2a2a;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .panel-icon {
+            font-size: 18px;
+        }
+
+        .panel-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .panel-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        /* Custom Scrollbar */
+        .panel-content::-webkit-scrollbar,
+        .task-list::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .panel-content::-webkit-scrollbar-track,
+        .task-list::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+
+        .panel-content::-webkit-scrollbar-thumb,
+        .task-list::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 4px;
+        }
+
+        .panel-content::-webkit-scrollbar-thumb:hover,
+        .task-list::-webkit-scrollbar-thumb:hover {
+            background: #444;
+        }
+
+        /* Content Styles */
+        .step-block {
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #2a2a2a;
+        }
+
+        .step-block:last-child {
+            border-bottom: none;
+        }
+
+        .step-header {
             display: inline-block;
-            padding: 2px 8px;
+            padding: 4px 10px;
             background: #667eea;
             color: white;
-            border-radius: 3px;
-            font-size: 11px;
-            margin-right: 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 10px;
         }
 
-        .loading {
+        .thinking-text {
+            color: #b3b3ff;
+            margin-bottom: 10px;
+            line-height: 1.8;
+        }
+
+        .goal-text {
+            color: #ffd966;
+            margin-bottom: 10px;
+            line-height: 1.8;
+        }
+
+        .action-item {
+            background: #1a1a1a;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            border-left: 3px solid #667eea;
+        }
+
+        .action-type {
+            color: #ff6b9d;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .action-details {
+            color: #b0b0b0;
+            font-size: 12px;
+        }
+
+        .result-item {
+            background: #1a1a1a;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            border-left: 3px solid #00ff66;
+        }
+
+        .result-success {
+            color: #00ff66;
+        }
+
+        .result-error {
+            color: #ff4444;
+            border-left-color: #ff4444;
+        }
+
+        .result-text {
+            color: #e0e0e0;
+            margin-top: 5px;
+            line-height: 1.6;
+        }
+
+        .url-badge {
             display: inline-block;
-            width: 16px;
-            height: 16px;
-            border: 2px solid #f3f3f3;
-            border-top: 2px solid #667eea;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
+            padding: 4px 10px;
+            background: #2a2a2a;
+            border-radius: 4px;
+            color: #888;
+            font-size: 11px;
+            margin-bottom: 10px;
+            word-break: break-all;
         }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .completion-banner {
+            background: linear-gradient(135deg, #00ff66 0%, #00cc52 100%);
+            color: #000;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+            margin-bottom: 15px;
         }
 
-        .error {
-            color: #f44336;
-            background: #ffebee;
-            padding: 10px;
-            border-radius: 5px;
-            margin: 10px 0;
+        .error-banner {
+            background: linear-gradient(135deg, #ff4444 0%, #cc0000 100%);
+            color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+            margin-bottom: 15px;
         }
 
-        .success {
-            color: #4caf50;
-            background: #e8f5e9;
-            padding: 10px;
-            border-radius: 5px;
-            margin: 10px 0;
+        .empty-state {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: #555;
+            font-size: 14px;
         }
 
-        @media (max-width: 768px) {
-            .main-content {
+        @media (max-width: 1024px) {
+            .output-grid {
                 grid-template-columns: 1fr;
+                grid-template-rows: auto auto auto;
+            }
+
+            .output-panel.full-width {
+                grid-column: 1;
             }
         }
     </style>
 </head>
+
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>🚀 Data Collector ADIA</h1>
-            <p>Distributed Browser Automation System</p>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2>📋 Task History</h2>
+                <button class="close-sidebar" onclick="toggleSidebar()">×</button>
+            </div>
+            <div class="task-list" id="taskList">
+                <p style="color: #666; text-align: center; padding: 20px;">Loading tasks...</p>
+            </div>
         </div>
 
+        <!-- Main Content -->
         <div class="main-content">
-            <div class="panel">
-                <h2>📝 Create New Task</h2>
-                <form id="taskForm">
-                    <div class="form-group">
-                        <label for="taskPrompt">Task Prompt</label>
-                        <textarea id="taskPrompt" placeholder="Enter your browser automation task..." required></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="maxSteps">Max Steps</label>
-                        <input type="number" id="maxSteps" value="100" min="1" max="1000">
-                    </div>
-                    <div class="form-group">
-                        <label for="browserName">Browser</label>
-                        <select id="browserName">
-                            <option value="firefox">Firefox</option>
-                            <option value="chrome">Chrome</option>
-                            <option value="webkit">WebKit</option>
-                        </select>
-                    </div>
-                    <button type="submit" id="startButton">Start Task</button>
-                </form>
-
-                <h2 style="margin-top: 30px;">📋 Task History</h2>
-                <div id="taskList" class="task-list">
-                    <p style="color: #999; text-align: center; padding: 20px;">Loading tasks...</p>
-                </div>
+            <!-- Header -->
+            <div class="header">
+                <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+                <h1>🚀 Data Collector ADIA</h1>
             </div>
 
-            <div class="panel">
-                <h2>📊 Task Output</h2>
-                <div id="streamOutput" class="stream-output">No task selected. Create a new task or select from history.</div>
+            <!-- Input Section -->
+            <div class="input-section">
+                <form id="taskForm">
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label for="taskPrompt">Task Prompt</label>
+                            <textarea id="taskPrompt" placeholder="Enter your browser automation task..."
+                                required></textarea>
+                        </div>
+                        <div class="input-group small">
+                            <label for="maxSteps">Max Steps</label>
+                            <input type="number" id="maxSteps" value="15" min="1" max="1000">
+                        </div>
+                        <div class="input-group small">
+                            <label for="browserName">Browser</label>
+                            <select id="browserName">
+                                <option value="firefox">Firefox</option>
+                                <option value="chrome" selected>Chrome</option>
+                                <option value="webkit">WebKit</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="start-button" id="startButton">Start Task</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Output Grid -->
+            <div class="output-grid">
+                <!-- Results Panel -->
+                <div class="output-panel full-width">
+                    <div class="panel-header">
+                        <span class="panel-icon">✨</span>
+                        <span class="panel-title">Results</span>
+                    </div>
+                    <div class="panel-content" id="resultsPanel">
+                        <div class="empty-state">No results yet. Create a task to get started.</div>
+                    </div>
+                </div>
+
+                <!-- Thinking Panel -->
+                <div class="output-panel">
+                    <div class="panel-header">
+                        <span class="panel-icon">🧠</span>
+                        <span class="panel-title">Thinking</span>
+                    </div>
+                    <div class="panel-content" id="thinkingPanel">
+                        <div class="empty-state">Waiting for task...</div>
+                    </div>
+                </div>
+
+                <!-- Actions Panel -->
+                <div class="output-panel">
+                    <div class="panel-header">
+                        <span class="panel-icon">⚡</span>
+                        <span class="panel-title">Action Logs</span>
+                    </div>
+                    <div class="panel-content" id="actionsPanel">
+                        <div class="empty-state">Waiting for task...</div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        const BACKEND_URL = 'http://localhost:8000';
+        const BACKEND_URL = 'http://localhost:8501';
         let currentTaskId = null;
-        let currentWebSocket = null;
+        let currentPollInterval = null;
 
         // Load tasks on page load
         window.addEventListener('DOMContentLoaded', () => {
@@ -291,6 +586,11 @@
             await createAndStartTask();
         });
 
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('open');
+        }
+
         async function createAndStartTask() {
             const taskPrompt = document.getElementById('taskPrompt').value;
             const maxSteps = parseInt(document.getElementById('maxSteps').value);
@@ -299,6 +599,9 @@
 
             startButton.disabled = true;
             startButton.textContent = 'Starting...';
+
+            // Clear panels
+            clearPanels();
 
             try {
                 const response = await fetch(`${BACKEND_URL}/tasks/start`, {
@@ -318,14 +621,14 @@
 
                 if (data.success) {
                     currentTaskId = data.task_id;
-                    addMessage('success', `Task created: ${data.task_id}`);
+                    addToResults(`✅ Task created: ${data.task_id}`, 'success');
                     loadTasks();
                     connectToStream(data.task_id);
                 } else {
-                    addMessage('error', `Failed to start task: ${data.message}`);
+                    addToResults(`❌ Failed to start task: ${data.message}`, 'error');
                 }
             } catch (error) {
-                addMessage('error', `Error: ${error.message}`);
+                addToResults(`❌ Error: ${error.message}`, 'error');
             } finally {
                 startButton.disabled = false;
                 startButton.textContent = 'Start Task';
@@ -334,24 +637,24 @@
 
         async function loadTasks() {
             try {
-                const response = await fetch(`${BACKEND_URL.replace('8000', '8002')}/tasks?limit=50`);
+                const response = await fetch(`${BACKEND_URL}/tasks?limit=50`);
                 const tasks = await response.json();
 
                 const taskList = document.getElementById('taskList');
-                
+
                 if (tasks.length === 0) {
-                    taskList.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">No tasks yet. Create your first task!</p>';
+                    taskList.innerHTML = '<p style="color: #666; text-align: center; padding: 20px;">No tasks yet.</p>';
                     return;
                 }
 
                 taskList.innerHTML = tasks.map(task => `
                     <div class="task-item ${task.task_id === currentTaskId ? 'active' : ''}" onclick="selectTask('${task.task_id}')">
                         <div class="task-header">
-                            <div class="task-title">${escapeHtml(task.task_prompt.substring(0, 50))}${task.task_prompt.length > 50 ? '...' : ''}</div>
+                            <div class="task-title">${escapeHtml(task.task_prompt.substring(0, 40))}${task.task_prompt.length > 40 ? '...' : ''}</div>
                             <span class="task-status status-${task.status}">${task.status}</span>
                         </div>
                         <div class="task-meta">
-                            Steps: ${task.max_steps} | Created: ${new Date(task.created_at * 1000).toLocaleString()}
+                            Steps: ${task.max_steps} | ${new Date(task.created_at * 1000).toLocaleString()}
                         </div>
                     </div>
                 `).join('');
@@ -362,24 +665,22 @@
 
         async function selectTask(taskId) {
             currentTaskId = taskId;
-            loadTasks(); // Refresh to show active state
+            loadTasks();
+            clearPanels();
 
             // Load task history
             try {
-                const response = await fetch(`${BACKEND_URL.replace('8000', '8002')}/tasks/${taskId}/history`);
+                const response = await fetch(`${BACKEND_URL}/tasks/${taskId}/history`);
                 const history = await response.json();
 
-                const output = document.getElementById('streamOutput');
-                output.innerHTML = history.map(item => {
+                history.forEach(item => {
                     try {
                         const stepData = JSON.parse(item.step_data);
-                        return formatOutput(stepData);
+                        processStepData(stepData);
                     } catch (e) {
-                        return `[${item.output_type}] ${item.step_data}\n`;
+                        console.error('Error parsing step data:', e);
                     }
-                }).join('\n\n');
-                
-                output.scrollTop = output.scrollHeight;
+                });
             } catch (error) {
                 console.error('Error loading task history:', error);
             }
@@ -387,78 +688,178 @@
             // Connect to stream if task is running
             const taskResponse = await fetch(`${BACKEND_URL}/tasks/${taskId}/status`);
             const taskData = await taskResponse.json();
-            
+
             if (taskData.status === 'running') {
                 connectToStream(taskId);
             }
         }
 
         function connectToStream(taskId) {
-            // Close existing connection
-            if (currentWebSocket) {
-                currentWebSocket.close();
+            // Stop any existing polling
+            if (currentPollInterval) {
+                clearInterval(currentPollInterval);
             }
 
-            const wsUrl = BACKEND_URL.replace('http', 'ws') + `/tasks/${taskId}/stream`;
-            const ws = new WebSocket(wsUrl);
-            currentWebSocket = ws;
+            addToResults('🔄 Monitoring task...', 'info');
 
-            const output = document.getElementById('streamOutput');
-            output.innerHTML = '';
-
-            ws.onopen = () => {
-                addMessage('success', `Connected to task stream: ${taskId}`);
-            };
-
-            ws.onmessage = (event) => {
+            // Poll for updates every 2 seconds
+            currentPollInterval = setInterval(async () => {
                 try {
-                    const data = JSON.parse(event.data);
-                    output.innerHTML += formatOutput(data) + '\n\n';
-                    output.scrollTop = output.scrollHeight;
+                    const statusResponse = await fetch(`${BACKEND_URL}/tasks/${taskId}/status`);
+                    const statusData = await statusResponse.json();
+
+                    const historyResponse = await fetch(`${BACKEND_URL}/tasks/${taskId}/history`);
+                    const history = await historyResponse.json();
+
+                    // Process new history items
+                    if (history && history.length > 0) {
+                        // Clear and re-render all
+                        clearPanels();
+                        history.forEach(item => {
+                            try {
+                                const stepData = JSON.parse(item.step_data);
+                                processStepData(stepData);
+                            } catch (e) {
+                                console.error('Error parsing step data:', e);
+                            }
+                        });
+                    }
+
+                    // Stop polling if task is done
+                    if (statusData.status === 'completed' || statusData.status === 'failed' || statusData.status === 'cancelled') {
+                        clearInterval(currentPollInterval);
+                        currentPollInterval = null;
+
+                        if (statusData.status === 'completed') {
+                            addToResults('✅ Task completed successfully!', 'completion');
+                        } else if (statusData.status === 'failed') {
+                            addToResults('❌ Task failed!', 'error');
+                        } else {
+                            addToResults('⚠️ Task cancelled!', 'info');
+                        }
+                    }
                 } catch (error) {
-                    output.innerHTML += `[RAW] ${event.data}\n`;
-                    output.scrollTop = output.scrollHeight;
+                    console.error('Error polling task:', error);
                 }
-            };
-
-            ws.onerror = (error) => {
-                addMessage('error', `WebSocket error: ${error}`);
-            };
-
-            ws.onclose = () => {
-                addMessage('info', 'Stream connection closed');
-                currentWebSocket = null;
-            };
+            }, 2000);
         }
 
-        function formatOutput(data) {
-            if (data.type === 'task_start') {
-                return `🚀 Task Started\nTask: ${data.task}\nMax Steps: ${data.max_steps}\n`;
-            } else if (data.type === 'step') {
-                let output = `<span class="step-indicator">Step ${data.step_number}</span>`;
-                if (data.url) output += `URL: ${data.url}\n`;
-                if (data.thinking) output += `Thinking: ${data.thinking}\n`;
-                if (data.next_goal) output += `Next Goal: ${data.next_goal}\n`;
+        function processStepData(data) {
+            if (data.type === 'step') {
+                // Add URL to results
+                if (data.url && data.url !== 'about:blank') {
+                    addToResults(`<div class="url-badge">📍 ${escapeHtml(data.url)}</div>`, 'raw');
+                }
+
+                // Add thinking
+                if (data.thinking) {
+                    addToThinking(data.step_number, data.thinking);
+                }
+
+                // Add next goal
+                if (data.next_goal) {
+                    addToThinking(data.step_number, `<strong>Goal:</strong> ${data.next_goal}`, true);
+                }
+
+                // Add actions
                 if (data.actions && data.actions.length > 0) {
-                    output += `Actions: ${JSON.stringify(data.actions, null, 2)}\n`;
+                    data.actions.forEach(action => {
+                        addToActions(data.step_number, action);
+                    });
                 }
+
+                // Add results
                 if (data.results && data.results.length > 0) {
-                    output += `Results: ${JSON.stringify(data.results, null, 2)}\n`;
+                    data.results.forEach(result => {
+                        addToResults(formatResult(result), 'result');
+                    });
                 }
-                return output;
             } else if (data.type === 'task_complete') {
-                return `✅ Task Completed\nSuccess: ${data.is_successful}\nTotal Steps: ${data.total_steps}\nFinal Result: ${data.final_result || 'N/A'}\n`;
+                const banner = `
+                    <div class="completion-banner">
+                        ✅ Task Completed Successfully!<br>
+                        <small>Total Steps: ${data.total_steps}</small>
+                    </div>
+                `;
+                addToResults(banner, 'raw');
+                if (data.final_result) {
+                    addToResults(`<strong>Final Result:</strong><br>${escapeHtml(data.final_result)}`, 'result');
+                }
             } else if (data.type === 'error') {
-                return `❌ Error: ${data.error}\n`;
+                addToResults(`<div class="error-banner">❌ Error: ${escapeHtml(data.error)}</div>`, 'raw');
             }
-            return JSON.stringify(data, null, 2);
         }
 
-        function addMessage(type, message) {
-            const output = document.getElementById('streamOutput');
-            const className = type === 'error' ? 'error' : type === 'success' ? 'success' : '';
-            output.innerHTML += `<div class="${className}">${escapeHtml(message)}</div>\n`;
-            output.scrollTop = output.scrollHeight;
+        function clearPanels() {
+            document.getElementById('resultsPanel').innerHTML = '';
+            document.getElementById('thinkingPanel').innerHTML = '';
+            document.getElementById('actionsPanel').innerHTML = '';
+        }
+
+        function addToResults(content, type = 'raw') {
+            const panel = document.getElementById('resultsPanel');
+            const div = document.createElement('div');
+
+            if (type === 'result') {
+                div.className = 'result-item';
+            }
+
+            div.innerHTML = content;
+            panel.appendChild(div);
+            panel.scrollTop = panel.scrollHeight;
+        }
+
+        function addToThinking(stepNum, content, isGoal = false) {
+            const panel = document.getElementById('thinkingPanel');
+            const div = document.createElement('div');
+            div.className = 'step-block';
+
+            const html = `
+                <div class="step-header">Step ${stepNum}</div>
+                <div class="${isGoal ? 'goal-text' : 'thinking-text'}">${content}</div>
+            `;
+
+            div.innerHTML = html;
+            panel.appendChild(div);
+            panel.scrollTop = panel.scrollHeight;
+        }
+
+        function addToActions(stepNum, action) {
+            const panel = document.getElementById('actionsPanel');
+            const div = document.createElement('div');
+
+            const actionType = Object.keys(action)[0];
+            const actionData = action[actionType];
+
+            const html = `
+                <div class="action-item">
+                    <div class="step-header">Step ${stepNum}</div>
+                    <div class="action-type">${actionType}</div>
+                    <div class="action-details">${JSON.stringify(actionData, null, 2)}</div>
+                </div>
+            `;
+
+            div.innerHTML = html;
+            panel.appendChild(div);
+            panel.scrollTop = panel.scrollHeight;
+        }
+
+        function formatResult(result) {
+            let html = '<div class="result-item">';
+
+            if (result.error) {
+                html = '<div class="result-item result-error">';
+                html += `<div class="result-error">❌ Error: ${escapeHtml(result.error)}</div>`;
+            } else if (result.extracted_content) {
+                html += `<div class="result-text">${escapeHtml(result.extracted_content)}</div>`;
+            }
+
+            if (result.is_done) {
+                html += '<div class="result-success">✅ Done</div>';
+            }
+
+            html += '</div>';
+            return html;
         }
 
         function escapeHtml(text) {
@@ -467,9 +868,9 @@
             return div.innerHTML;
         }
 
-        // Refresh tasks every 5 seconds
-        setInterval(loadTasks, 5000);
+        // Refresh tasks every 10 seconds
+        setInterval(loadTasks, 10000);
     </script>
 </body>
-</html>
 
+</html>

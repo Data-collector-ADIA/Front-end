@@ -27,7 +27,9 @@ cd ../Front-end
 
 ## Running the Service
 
-### For Testing (Single Machine)
+You have two options for the frontend:
+
+### Option 1: Streamlit App (Recommended)
 
 Run in a screen session:
 
@@ -41,6 +43,23 @@ streamlit run app.py
 # Detach: Press Ctrl+A then D
 # Reattach: screen -r frontend-service
 ```
+
+### Option 2: HTML Frontend with gRPC Proxy
+
+If you prefer the HTML interface:
+
+```bash
+# Create a new screen session
+screen -S frontend-service
+
+# Start proxy server (handles HTML + gRPC conversion)
+python proxy_server.py
+
+# Detach: Press Ctrl+A then D
+# Reattach: screen -r frontend-service
+```
+
+**Note:** The `server.py` file now automatically redirects to `proxy_server.py` for full gRPC support.
 
 ### For Production (Separate Machine)
 

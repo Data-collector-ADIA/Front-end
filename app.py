@@ -136,9 +136,9 @@ if page == "Create Task":
         
         col1, col2 = st.columns(2)
         with col1:
-            max_steps = st.number_input("Max Steps", min_value=1, max_value=1000, value=100)
+            max_steps = st.number_input("Max Steps", min_value=1, max_value=1000, value=15)
         with col2:
-            browser_name = st.selectbox("Browser", ["firefox", "webkit", "chrome"], index=0)
+            browser_name = st.selectbox("Browser", ["firefox", "webkit", "chrome"], index=2)
         
         user_id = st.text_input("User ID (optional)", value="default")
         
